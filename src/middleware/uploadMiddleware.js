@@ -2,11 +2,10 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-
-const storage = multer.diskStorage({
+const createStorage = (folder) => multer.diskStorage({
     destination: (req, file, cb) => {
-        fs.mkdirSync("uploads/profile-pictures", { recursive: true });
-        cb(null, "uploads/profile-pictures/");
+        fs.mkdirSync(`uploads/${folder}`, { recursive: true });
+        cb(null, `uploads/${folder}/`);
     },
     filename: (req, file, cb) => {
         const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -23,6 +22,8 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } }); // 5MB
+const limits = { fileSize: 5 * 1024 * 1024 };
 
-export default upload;
+export const uploadProfilePic = multer({ storage: createStorage("profile-pictures"), fileFilter, limits });
+export const uploadLicenseImage = multer({ storage: createStorage("license-images"), fileFilter, limits });
+export const uploadVehicleImage = multer({ storage: createStorage("vehicle-images"), fileFilter, limits });
